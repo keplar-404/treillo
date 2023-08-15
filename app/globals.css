@@ -9,3 +9,6 @@
 .task-title-topbar{
     @apply w-[26rem]  hover:no-underline bg-white dark:bg-black rounded-[0.5rem]
 }
+.task-coloumn {
+    @apply w-full px-[16px] py-[10px] dark:bg-black bg-white rounded-[12px] flex items-center cursor-pointer
+}

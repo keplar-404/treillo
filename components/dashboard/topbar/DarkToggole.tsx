@@ -6,7 +6,6 @@ import { useState } from "react";
 export default function DarkToggole() {
   const { setTheme } = useTheme();
   const [theme, updateTheme] = useState<boolean>(false);
-
   const themeChange = () => {
     if (theme === false) {
       updateTheme(true);
