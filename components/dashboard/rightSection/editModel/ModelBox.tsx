@@ -24,7 +24,7 @@ export default function ModelBox() {
 
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction>Continue</AlertDialogAction>
+            <AlertDialogAction>Save</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </div>

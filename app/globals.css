@@ -12,3 +12,23 @@
 .task-coloumn {
     @apply w-full px-[16px] py-[10px] dark:bg-black bg-white rounded-[12px] flex items-center cursor-pointer
 }
+
+
+#colorPicker{
+    -webkit-appearance: none;
+    appearance: none;
+    -moz-appearance: none;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    width: 60px;
+    height: 30px;
+}
+#colorPicker::-webkit-color-swatch{
+    border-radius: 15px;
+    border: none;
+}
+#colorPicker::-moz-color-swatch{
+    border-radius: 15px;
+    border: none;
+}
