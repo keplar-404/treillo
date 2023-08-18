@@ -1,24 +1,46 @@
 "use client";
 import { modelAddData } from "@/constants/model";
-import { useElementStore } from "@/lib/stateManage/state";
+import {
+  useElementStore,
+  usePreviewElementStore,
+} from "@/lib/stateManage/state";
 import { Button } from "@/components/ui/button";
+import React from "react";
+
+let initailIdForAddElement = 0;
+let initailIdForPreviewElement = 0;
+const randomIdForAddElement = () => (initailIdForAddElement += 1);
+const randomIdForPreviewElement = () => (initailIdForPreviewElement += 1);
 
 const AddModelData = ({
+  idForAddElement,
+  idForPreviewElement,
   name,
   svg,
   svg2,
   comp,
+  previecom,
   eleFunction,
+  elePreviewFunction,
 }: {
+  idForAddElement: Function;
+  idForPreviewElement: Function;
   name: string;
   svg: string;
   svg2?: string;
-  comp: JSX.Element;
+  comp: React.ElementType;
+  previecom: React.ElementType;
   eleFunction: any;
+  elePreviewFunction: any;
 }): JSX.Element => {
   return (
     <Button
-      onClick={() => eleFunction(comp)}
+      onClick={() => {
+        const generatedId = idForAddElement();
+        const generatedIdForPreviewElement = idForPreviewElement();
+        eleFunction({ comp, generatedId, generatedIdForPreviewElement });
+        elePreviewFunction({ previecom, generatedIdForPreviewElement });
+      }}
       className="w-full dark:bg-black bg-white dark:text-white text-black dark:hover:text-black hover:text-white"
     >
       <p className="">{name}</p>
@@ -27,7 +49,9 @@ const AddModelData = ({
 };
 export default function AddElement() {
   const element = useElementStore((state: any) => state.inc);
-  // console.log(get);
+  const elementPreview = usePreviewElementStore((state: any) => state.inc);
+  // const getElement = useElementStore((state: any) => state.element);
+  // console.log(getElement);
 
   return (
     <>
@@ -38,11 +62,15 @@ export default function AddElement() {
         {modelAddData.map((data) => (
           <AddModelData
             key={data.id}
+            idForAddElement={randomIdForAddElement}
+            idForPreviewElement={randomIdForPreviewElement}
             name={data.name}
             svg={data.svg}
             svg2={data.svg2}
             comp={data.component}
+            previecom={data.previewcomponent}
             eleFunction={element}
+            elePreviewFunction={elementPreview}
           />
         ))}
       </div>

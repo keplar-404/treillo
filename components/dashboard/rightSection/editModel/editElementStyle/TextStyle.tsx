@@ -16,53 +16,97 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { useRef } from "react";
+import Image from "next/image";
+import {
+  useElementStore,
+  usePreviewElementStore,
+} from "@/lib/stateManage/state";
 
-export default function TextStyle() {
-  const textBoxType = useRef(null);
+export default function TextStyle({
+  id,
+  idforPreviewElement,
+}: {
+  id: number;
+  idforPreviewElement: number;
+}) {
+  // console.log(id)
   const textBox = useRef<HTMLTextAreaElement>(null);
   const headingBox = useRef<HTMLInputElement>(null);
   const color = useRef<HTMLInputElement>(null);
   const position = useRef<HTMLDivElement>(null);
 
   const updateField = () => {
-    console.log("textBoxType: " + textBoxType.current?.value);
     // console.log('trigger');
     // console.log("textBox: " + textBox.current?.value);
     // console.log("headingBox: " + headingBox.current?.value);
     // console.log("color: " + color.current?.value);
-    // console.log("position: " + position.current?.value);
+  };
+
+  const updateFieldForSelectHeading = (value: string) => {
+    // geted value
+  };
+  const updateFieldForSelectPosition = (value: string) => {
+    // geted value
+  };
+
+  // state of add elemend and delete element
+  const delElement = useElementStore((state: any) => state.dec);
+  const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
+
+  const deleteElement = (
+    generatedId: number,
+    generatedIdForPreviewElement: number
+  ) => {
+    delElement(generatedId);
+    delPreviewElement(generatedIdForPreviewElement);
   };
 
   return (
     <>
-      <Accordion type="single" collapsible>
-        <AccordionItem className=" border-none" value="item-1">
-          <AccordionTrigger className="hover:no-underline dark:bg-black bg-white rounded-[12px] px-[16px] py-[10px]">
-            <div className="">Text</div>
+      <Accordion type="single" collapsible className="relative">
+        <div
+          className="z-[100] absolute flex ml-[17rem] mt-[.8rem] w-[19px] h-fit cursor-pointer"
+          onClick={() => deleteElement(id, idforPreviewElement)}
+        >
+          <Image
+            src={"./Delete.svg"}
+            alt="icon"
+            height={16}
+            width={16}
+            className="dark:hidden block"
+          />
+          <Image
+            src={"./deleteWhite.svg"}
+            alt="icon"
+            height={14}
+            width={14}
+            className="dark:block hidden"
+          />
+        </div>
+        <AccordionItem className="border-none" value="item-1">
+          <AccordionTrigger className=" hover:no-underline dark:bg-black bg-white rounded-[12px] px-[16px] py-[10px]">
+            <div className="w-full flex justify-between items-center">
+              <p>Text</p>
+            </div>
           </AccordionTrigger>
+
           <AccordionContent className="dark:bg-[#2B3035] bg-[#d9d8d8] rounded-t-none rounded-b-[12px] px-[16px] py-[10px]">
             {/* style property */}
             <div className="flex flex-col gap-y-8">
               {/* heading and text */}
-              <Select onValueChange={updateField} >
-                <SelectTrigger className="w-[180px]" >
-                  <SelectValue ref={textBoxType} placeholder="Select" />
+
+              <Select
+                onValueChange={(value) => updateFieldForSelectHeading(value)}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent >
+                <SelectContent>
                   <SelectItem value="heading1">Heading 1</SelectItem>
                   <SelectItem value="heading2">Heading 2</SelectItem>
                   <SelectItem value="heading3">Heading 3</SelectItem>
                 </SelectContent>
               </Select>
-
-              {/* <select ref={textBoxType} onChange={updateField}>
-                <option value="" disabled selected>
-                  Select an option
-                </option>
-                <option value="option1"><h1>Option</h1></option>
-                <option value="option2"><h1>Option</h1></option>
-                <option value="option3"><h1>Option</h1></option>
-              </select> */}
 
               <Textarea ref={textBox} onChange={updateField} />
               <Input type="text" ref={headingBox} onChange={updateField} />
@@ -81,7 +125,9 @@ export default function TextStyle() {
               </div>
 
               {/* position */}
-              <Select>
+              <Select
+                onValueChange={(value) => updateFieldForSelectPosition(value)}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Position" />
                 </SelectTrigger>
