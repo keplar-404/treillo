@@ -53,27 +53,29 @@ export const usePreviewElementStore = create<State>((set) => ({
 
 // Define the type of the obj parameter
 type Property = {
-  idforPreviewElement: string;
-  text_Property: string;
-  color_Style: string;
-  position: string;
+  idforPreviewElement: number;
+  text_Property?: string;
+  color_Style?: string;
+  position?: string;
+  image?: Blob | File | undefined; 
 };
 
 // Define the type of the state
 type StateForPropertyComponent = {
   propertyForComponent: Property[];
   addProperty: (obj: Property) => void;
-  deleteProperty: (id: string) => void;
+  deleteProperty: (id: number) => void;
 };
 
 export const useProperty = create<StateForPropertyComponent>((set) => ({
   propertyForComponent: [],
   addProperty: (obj) =>
     set((state) => {
-      const id = obj.idforPreviewElement;
-      const text = obj.text_Property;
-      const color = obj.color_Style;
-      const position = obj.position;
+      const id = obj.idforPreviewElement || "";
+      const text = obj.text_Property || "";
+      const color = obj.color_Style || "";
+      const position = obj.position || "";
+      const image = obj.image || undefined
       let allProperty = state.propertyForComponent;
 
       if (allProperty.length === 0) {
@@ -93,11 +95,13 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
           matchedId[0].text_Property = text;
           matchedId[0].color_Style = color;
           matchedId[0].position = position;
+          matchedId[0].image = image;
+
           return { propertyForComponent: [...matchedId, ...unMatchedId] };
         }
       }
     }),
-  deleteProperty: (id) =>
+  deleteProperty: (id:number) =>
     set((state) => {
       const updatedPropety = state.propertyForComponent.filter(
         (data) => data.idforPreviewElement !== id

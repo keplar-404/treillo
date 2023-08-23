@@ -1,3 +1,4 @@
+"use client";
 import {
   Accordion,
   AccordionContent,
@@ -8,8 +9,10 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
+  useProperty,
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
+import { useState } from "react";
 
 export default function ImageStyle({
   id,
@@ -20,6 +23,30 @@ export default function ImageStyle({
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
+  const [error, setError] = useState("");
+  const image = useProperty((state) => state.addProperty);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target?.files?.[0];
+    // console.log(typeof(file))
+    if (file) {
+      const allowedTypes = ["image/jpeg", "image/png"];
+      const maxSize = 4 * 1024 * 1024; // 4 MB
+
+      if (allowedTypes.includes(file.type) && file.size <= maxSize) {
+        const obj = {
+          idforPreviewElement: idforPreviewElement,
+          image: file,
+        };
+        image(obj);
+        setError("");
+      } else {
+        setError(
+          "Invalid file. Please select a valid image file (JPEG/PNG) under 4 MB."
+        );
+      }
+    }
+  };
 
   const deleteElement = (
     generatedId: number,
@@ -55,7 +82,12 @@ export default function ImageStyle({
             <div className="">Image</div>
           </AccordionTrigger>
           <AccordionContent className="dark:bg-[#2B3035] bg-[#d9d8d8] rounded-t-none rounded-b-[12px] px-[16px] py-[10px]">
-            <Input type="file" />
+            <Input
+              type="file"
+              onChange={handleFileChange}
+              accept="image/jpeg, image/png"
+            />
+            {error && <p className="error">{error}</p>}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
