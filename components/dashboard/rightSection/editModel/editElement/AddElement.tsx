@@ -3,7 +3,7 @@ import { modelAddData } from "@/constants/model";
 import {
   useElementStore,
   usePreviewElementStore,
-} from "@/lib/stateManage/state";
+} from "@/lib/stateManage/globalState";
 import { Button } from "@/components/ui/button";
 import React from "react";
 

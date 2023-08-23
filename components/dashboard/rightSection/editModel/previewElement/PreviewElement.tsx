@@ -6,7 +6,7 @@ import CodePreviewBox from "./CodePreviewBox";
 import DeviderPreview from "./DeviderPreview";
 import EmptyPreview from "./EmptyPreview";
 import ImagePreview from "./ImagePreview";
-import { usePreviewElementStore } from "@/lib/stateManage/state";
+import { usePreviewElementStore } from "@/lib/stateManage/globalState";
 
 interface Prop {
   previecom: React.ElementType;

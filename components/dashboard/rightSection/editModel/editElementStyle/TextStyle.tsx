@@ -14,13 +14,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
 import { useRef } from "react";
 import Image from "next/image";
 import {
   useElementStore,
   usePreviewElementStore,
-} from "@/lib/stateManage/state";
+  useProperty,
+} from "@/lib/stateManage/globalState";
+
+interface PropertyObj {
+  idforPreviewElement: number;
+  text_Property: string | undefined;
+  color_Style: string;
+  position: string;
+}
 
 export default function TextStyle({
   id,
@@ -29,24 +36,29 @@ export default function TextStyle({
   id: number;
   idforPreviewElement: number;
 }) {
-  // console.log(id)
-  const textBox = useRef<HTMLTextAreaElement>(null);
-  const headingBox = useRef<HTMLInputElement>(null);
+  const text = useRef<HTMLTextAreaElement>(null);
   const color = useRef<HTMLInputElement>(null);
   const position = useRef<HTMLDivElement>(null);
 
-  const updateField = () => {
-    // console.log('trigger');
-    // console.log("textBox: " + textBox.current?.value);
-    // console.log("headingBox: " + headingBox.current?.value);
-    // console.log("color: " + color.current?.value);
-  };
+  const updateProperty = useProperty((state: any) => state?.addProperty);
+  const propertyForComponent = useProperty(
+    (state: any) => state?.propertyForComponent
+  );
+  const matchedId = propertyForComponent.filter(
+    (data: any) => data.idforPreviewElement === idforPreviewElement
+  );
+  const deleteProperty = useProperty((state: any) => state?.deleteProperty);
 
-  const updateFieldForSelectHeading = (value: string) => {
-    // geted value
-  };
-  const updateFieldForSelectPosition = (value: string) => {
-    // geted value
+  //  update style for text state
+  const updateField = (event: any) => {
+    const propertyObj: PropertyObj = {
+      idforPreviewElement: idforPreviewElement,
+      text_Property: text.current?.value,
+      color_Style: color.current!.value,
+      position: event,
+    };
+
+    updateProperty(propertyObj);
   };
 
   // state of add elemend and delete element
@@ -59,6 +71,7 @@ export default function TextStyle({
   ) => {
     delElement(generatedId);
     delPreviewElement(generatedIdForPreviewElement);
+    deleteProperty(idforPreviewElement);
   };
 
   return (
@@ -95,21 +108,12 @@ export default function TextStyle({
             <div className="flex flex-col gap-y-8">
               {/* heading and text */}
 
-              <Select
-                onValueChange={(value) => updateFieldForSelectHeading(value)}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="heading1">Heading 1</SelectItem>
-                  <SelectItem value="heading2">Heading 2</SelectItem>
-                  <SelectItem value="heading3">Heading 3</SelectItem>
-                </SelectContent>
-              </Select>
-
-              <Textarea ref={textBox} onChange={updateField} />
-              <Input type="text" ref={headingBox} onChange={updateField} />
+              <Textarea
+                ref={text}
+                onChange={updateField}
+                placeholder="write something..."
+                value={matchedId[0]?.text_Property}
+              />
 
               {/* Color picker */}
               <div className="flex items-center gap-x-3">
@@ -120,21 +124,20 @@ export default function TextStyle({
                   name="colorPicker"
                   className="rounded-lg"
                   ref={color}
+                  value={matchedId[0]?.color_Style}
                   onChange={updateField}
                 />
               </div>
 
               {/* position */}
-              <Select
-                onValueChange={(value) => updateFieldForSelectPosition(value)}
-              >
+              <Select onValueChange={(value: string) => updateField(value)}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Position" />
                 </SelectTrigger>
-                <SelectContent ref={position} onChange={updateField}>
-                  <SelectItem value="heading1">Left</SelectItem>
-                  <SelectItem value="heading2">Right</SelectItem>
-                  <SelectItem value="heading3">Center</SelectItem>
+                <SelectContent ref={position}>
+                  <SelectItem value="left">Left</SelectItem>
+                  <SelectItem value="right">Right</SelectItem>
+                  <SelectItem value="center">Center</SelectItem>
                 </SelectContent>
               </Select>
             </div>

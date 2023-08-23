@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
-} from "@/lib/stateManage/state";
+} from "@/lib/stateManage/globalState";
 import Image from "next/image";
 
 export default function CheckboxStyle({

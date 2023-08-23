@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   useElementStore,
   usePreviewElementStore,
-} from "@/lib/stateManage/state";
+} from "@/lib/stateManage/globalState";
 import Image from "next/image";
 export default function CodeStyle({
   id,

@@ -1,5 +1,5 @@
 "use client";
-import { useElementStore } from "@/lib/stateManage/state";
+import { useElementStore } from "@/lib/stateManage/globalState";
 import React from "react";
 
 import CheckboxStyle from "./CheckboxStyle";
