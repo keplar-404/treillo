@@ -32,3 +32,24 @@
     border-radius: 15px;
     border: none;
 }
+
+
+.custom-slider {
+    width: 100%; /* Set the width of the slider */
+    height: 20px; /* Set the height of the slider */
+    background-color: #ddd; /* Set the background color of the slider track */
+    border: none; /* Remove the default border */
+    border-radius: 10px; /* Set border radius */
+    outline: none; /* Remove outline on focus */
+    cursor: pointer; /* Change cursor to pointer */
+  }
+  
+  .custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px; /* Set the width of the thumb */
+    height: 20px; /* Set the height of the thumb */
+    background-color: #007bff; /* Set the color of the thumb */
+    border-radius: 50%; /* Create a circular thumb */
+    cursor: pointer; /* Change cursor to pointer */
+  }

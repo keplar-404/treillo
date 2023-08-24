@@ -8,6 +8,7 @@ import {
 import {
   useElementStore,
   usePreviewElementStore,
+  useProperty,
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
 export default function Devider({
@@ -19,6 +20,14 @@ export default function Devider({
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
+  const useDevider = useProperty((state) => state.addProperty);
+
+  const updateValue = (value: any) => {
+    useDevider({
+      idforPreviewElement: idforPreviewElement,
+      slider: value[0],
+    });
+  };
 
   const deleteElement = (
     generatedId: number,
@@ -57,7 +66,14 @@ export default function Devider({
             <div className="flex flex-col gap-y-4">
               <div>
                 <p>Weidth</p>
-                <Slider defaultValue={[30]} max={60} step={1} />
+                <Slider
+                  defaultValue={[20]}
+                  min={0}
+                  max={20}
+                  step={1}
+                  onValueChange={updateValue}
+                />
+                {/* <input type="range" min={0} defaultValue={60} max={60} step={1} onChange={updateValue} className="custom-slider"  /> */}
               </div>
             </div>
           </AccordionContent>

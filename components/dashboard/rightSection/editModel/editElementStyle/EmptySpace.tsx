@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
+  useProperty
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
 
@@ -20,6 +21,17 @@ export default function EmptySpace({
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
+  const useHeight = useProperty(state=> state.addProperty)
+  const heightValue = useProperty(state=>state.propertyForComponent)?.filter(data=> data.idforPreviewElement === id)?.[0]?.height?? 0;
+
+  const updateValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(event.target.value)
+    const value = Number(event.target.value)
+    useHeight({
+      idforPreviewElement:idforPreviewElement,
+      height: value
+    })
+  }
 
   const deleteElement = (
     generatedId: number,
@@ -55,9 +67,9 @@ export default function EmptySpace({
             <div className="">Empty space</div>
           </AccordionTrigger>
           <AccordionContent className="dark:bg-[#2B3035] bg-[#d9d8d8] rounded-t-none rounded-b-[12px] px-[16px] py-[10px]">
-            <div className="flex gap-x-4">
-              <p>Weidth</p>
-              <Input type="number" />
+            <div className="">
+              <p className="mt-4 mb-4">Please input number</p>
+              <Input type="number" onChange={updateValue} value={heightValue} />
             </div>
           </AccordionContent>
         </AccordionItem>

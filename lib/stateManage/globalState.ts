@@ -49,15 +49,15 @@ export const usePreviewElementStore = create<State>((set) => ({
     }),
 }));
 
-
-
 // Define the type of the obj parameter
 type Property = {
   idforPreviewElement: number;
   text_Property?: string;
   color_Style?: string;
   position?: string;
-  image?: Blob | File | undefined; 
+  image?: Blob | File | undefined;
+  slider?: number;
+  height?: number
 };
 
 // Define the type of the state
@@ -75,7 +75,9 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
       const text = obj.text_Property || "";
       const color = obj.color_Style || "";
       const position = obj.position || "";
-      const image = obj.image || undefined
+      const image = obj.image || undefined;
+      const slider = obj.slider || 0
+      const height = obj.height || 1
       let allProperty = state.propertyForComponent;
 
       if (allProperty.length === 0) {
@@ -96,12 +98,14 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
           matchedId[0].color_Style = color;
           matchedId[0].position = position;
           matchedId[0].image = image;
+          matchedId[0].slider = slider
+          matchedId[0].height = height
 
           return { propertyForComponent: [...matchedId, ...unMatchedId] };
         }
       }
     }),
-  deleteProperty: (id:number) =>
+  deleteProperty: (id: number) =>
     set((state) => {
       const updatedPropety = state.propertyForComponent.filter(
         (data) => data.idforPreviewElement !== id
@@ -109,4 +113,6 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
       return { propertyForComponent: updatedPropety };
     }),
 }));
+
+
 

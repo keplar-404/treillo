@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
+  useProperty
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
 
@@ -20,6 +21,17 @@ export default function CheckboxStyle({
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
+  const useText = useProperty(state=> state.addProperty)
+  const valueText = useProperty(state=>state.propertyForComponent)?.filter(data=> data.idforPreviewElement === id)?.[0]?.text_Property ?? "";
+
+  const updateText = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const text = event.target.value
+    // console.log(text)
+    useText({
+      idforPreviewElement: idforPreviewElement,
+      text_Property: text
+    })
+  }
 
   const deleteElement = (
     generatedId: number,
@@ -54,7 +66,7 @@ export default function CheckboxStyle({
           <div className="">Checkbox</div>
         </AccordionTrigger>
         <AccordionContent className="dark:bg-[#2B3035] bg-[#d9d8d8] rounded-t-none rounded-b-[12px] px-[16px] py-[10px]">
-          <Input type="text" />
+          <Input type="text" onChange={updateText} value={valueText} />
         </AccordionContent>
       </AccordionItem>
     </Accordion>
