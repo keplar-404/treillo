@@ -17,9 +17,13 @@ import { useState } from "react";
 export default function ImageStyle({
   id,
   idforPreviewElement,
+  coulmnParentid,
+  taskParentId,
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
@@ -37,6 +41,8 @@ export default function ImageStyle({
         const obj = {
           idforPreviewElement: idforPreviewElement,
           image: file,
+          taskParentId: taskParentId,
+          coulmnParentid: coulmnParentid,
         };
         image(obj);
         setError("");

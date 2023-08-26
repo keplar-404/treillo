@@ -24,6 +24,8 @@ import {
 
 interface PropertyObj {
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
   text_Property: string | undefined;
   color_Style: string;
   position: string;
@@ -32,9 +34,13 @@ interface PropertyObj {
 export default function TextStyle({
   id,
   idforPreviewElement,
+  coulmnParentid,
+  taskParentId,
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const text = useRef<HTMLTextAreaElement>(null);
   const color = useRef<HTMLInputElement>(null);
@@ -53,6 +59,8 @@ export default function TextStyle({
   const updateField = (event: any) => {
     const propertyObj: PropertyObj = {
       idforPreviewElement: idforPreviewElement,
+      taskParentId: taskParentId,
+      coulmnParentid: coulmnParentid,
       text_Property: text.current?.value,
       color_Style: color.current!.value,
       position: event,

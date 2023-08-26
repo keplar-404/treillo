@@ -14,9 +14,13 @@ import Image from "next/image";
 export default function Devider({
   id,
   idforPreviewElement,
+  coulmnParentid,
+  taskParentId
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
@@ -26,6 +30,8 @@ export default function Devider({
     useDevider({
       idforPreviewElement: idforPreviewElement,
       slider: value[0],
+      taskParentId: taskParentId,
+      coulmnParentid: coulmnParentid
     });
   };
 

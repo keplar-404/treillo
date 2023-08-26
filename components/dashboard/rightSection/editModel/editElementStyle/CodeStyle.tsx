@@ -15,9 +15,13 @@ import { useRef } from "react";
 export default function CodeStyle({
   id,
   idforPreviewElement,
+  coulmnParentid, 
+  taskParentId
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
@@ -33,6 +37,8 @@ export default function CodeStyle({
     useUpdatetext({
       idforPreviewElement: idforPreviewElement,
       text_Property: text.current?.value,
+      taskParentId: taskParentId,
+      coulmnParentid: coulmnParentid
     });
   };
 

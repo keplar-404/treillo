@@ -9,7 +9,7 @@ import EditModel from "./editModel/EditModel";
 import Image from "next/image";
 import { mangeTaskComponents, useElementStore, usePreviewElementStore, useProperty } from "@/lib/stateManage/globalState";
 
-export default function Task({ taskParentId }: { taskParentId: number }) {
+export default function Task({ taskParentId, coulmnParentid }: { taskParentId: number, coulmnParentid?:number }) {
   const deleteTaskState = mangeTaskComponents(state=> state.deleteTaskCompnent)
   
   const getUseElementStores = useElementStore(state=> state.element)
@@ -21,8 +21,8 @@ export default function Task({ taskParentId }: { taskParentId: number }) {
   const delFullTaskPreview = usePreviewElementStore(state=> state.delFullTask)
   
   const getPropertys = useProperty(state=> state.propertyForComponent)
-  const getProperty = getPropertys.filter(data=> data.idforPreviewElement === getPreview[0]?.generatedIdForPreviewElement)
-  const delProperty = useProperty(state=> state.deleteProperty)
+  const getProperty = getPropertys.filter(data=> data.taskParentId === taskParentId)
+  const delFullTaskProperty = useProperty(state=> state.deleteProperty)
   
   
   
@@ -30,21 +30,7 @@ export default function Task({ taskParentId }: { taskParentId: number }) {
     deleteTaskState({ taskParentid: taskParentId })
     delFullTaskStore(getUseElementStore[0]?.taskParentId)
     delFullTaskPreview(getPreview[0]?.taskParentId)
-    delProperty(getPreview[0]?.generatedIdForPreviewElement)
-
-    // console.log(getPreview)
-    // console.log(getPropertys)
-    // console.log(getProperty)
-    
-    
-    
-    // console.log(getPreview[0]?.taskParentId )
-    // delProperty(getProperty[0]?.idforPreviewElement)
-    // delPreview(getPreview[0]?.generatedId)
-
-    // console.log( getPreviews)
-    // console.log( getPropertys)
-
+    delFullTaskProperty(getProperty[0]?.taskParentId)
   } 
   return (
     <>
@@ -86,7 +72,7 @@ export default function Task({ taskParentId }: { taskParentId: number }) {
           <AccordionContent>
             <div className="mt-[2rem]">
               <div className="w-full h-fit flex justify-end">
-                <EditModel taskParentId={taskParentId} />
+                <EditModel taskParentId={taskParentId} coulmnParentid={coulmnParentid} />
               </div>
               <p className="mt-4">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.

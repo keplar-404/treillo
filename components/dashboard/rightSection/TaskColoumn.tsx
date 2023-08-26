@@ -2,6 +2,7 @@
 import Task from "./Task";
 import {
   mangeTaskComponents,
+  mangeColumnComponents,
   useElementStore,
   usePreviewElementStore,
   useProperty,
@@ -9,9 +10,40 @@ import {
 
 let id = 0;
 
-export default function TaskColoumn() {
+export default function TaskColoumn({
+  coulmnParentid,
+}: {
+  coulmnParentid: number;
+}) {
   const add_Task = mangeTaskComponents((state) => state.addTaskComponent);
-  const getTask = mangeTaskComponents((state) => state.taskComponents);
+  const getTask = mangeTaskComponents((state) => state.taskComponents)?.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+  const delTaskColumnState = mangeColumnComponents(
+    (state) => state.deleteColumnCompnent
+  );
+
+  const getUseElementStores = useElementStore((state) => state.element);
+  const getUseElementStore = getUseElementStores.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+  const delFullTaskColumnStore = useElementStore(
+    (state) => state.delFullTaskColumn
+  );
+
+  const getPreviews = usePreviewElementStore((state) => state.element);
+  const getPreview = getPreviews.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+  const delFullTaskColumnPreview = usePreviewElementStore(
+    (state) => state.delFullTaskColumn
+  );
+
+  const getPropertys = useProperty((state) => state.propertyForComponent);
+  const getProperty = getPropertys.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+  const delProperty = useProperty((state) => state.deleteProperty);
 
   const idGenerate = () => (id += 1);
 
@@ -19,10 +51,16 @@ export default function TaskColoumn() {
     const id = idGenerate();
     add_Task({
       taskParentid: id,
+      coulmnParentid: coulmnParentid,
     });
   };
 
-  const deleteTaskColumn = () => {};
+  const deleteTaskColumn = () => {
+    delTaskColumnState({ coulmnParentid: coulmnParentid });
+    delFullTaskColumnStore(getUseElementStore[0]?.coulmnParentid);
+    delFullTaskColumnPreview(getPreview[0]?.coulmnParentid);
+    delProperty(getProperty[0]?.coulmnParentid);
+  };
 
   return (
     <div className="w-[17rem] h-[30rem] overflow-y-scroll dark:bg-[#191D20] bg-[#F3F3F3] rounded-[20px] py-[28px] px-[13px]">
@@ -85,7 +123,11 @@ export default function TaskColoumn() {
       <div className="w-full mb-9 rounded-s-2xl rounded-e-2xl mt-5 dark:bg-white bg-[#3B3F40] opacity-[40%]  h-[1px]"></div>
 
       {getTask.map((data) => (
-        <Task key={data.taskParentid} taskParentId={data.taskParentid} />
+        <Task
+          key={data.taskParentid}
+          taskParentId={data.taskParentid}
+          coulmnParentid={data.coulmnParentid}
+        />
       ))}
     </div>
   );

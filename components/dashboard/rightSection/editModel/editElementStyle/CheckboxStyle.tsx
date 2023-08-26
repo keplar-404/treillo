@@ -8,30 +8,38 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
-  useProperty
+  useProperty,
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
 
 export default function CheckboxStyle({
   id,
   idforPreviewElement,
+  taskParentId,
+  coulmnParentid,
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
-  const useText = useProperty(state=> state.addProperty)
-  const valueText = useProperty(state=>state.propertyForComponent)?.filter(data=> data.idforPreviewElement === id)?.[0]?.text_Property ?? "";
+  const useText = useProperty((state) => state.addProperty);
+  const valueText =
+    useProperty((state) => state.propertyForComponent)?.filter(
+      (data) => data.idforPreviewElement === id
+    )?.[0]?.text_Property ?? "";
 
   const updateText = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const text = event.target.value
-    // console.log(text)
+    const text = event.target.value;
     useText({
       idforPreviewElement: idforPreviewElement,
-      text_Property: text
-    })
-  }
+      text_Property: text,
+      taskParentId: taskParentId,
+      coulmnParentid: coulmnParentid,
+    });
+  };
 
   const deleteElement = (
     generatedId: number,

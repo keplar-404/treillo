@@ -8,30 +8,39 @@ import { Input } from "@/components/ui/input";
 import {
   useElementStore,
   usePreviewElementStore,
-  useProperty
+  useProperty,
 } from "@/lib/stateManage/globalState";
 import Image from "next/image";
 
 export default function EmptySpace({
   id,
   idforPreviewElement,
+  coulmnParentid,
+  taskParentId,
 }: {
   id: number;
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
 }) {
   const delElement = useElementStore((state: any) => state.dec);
   const delPreviewElement = usePreviewElementStore((state: any) => state.dec);
-  const useHeight = useProperty(state=> state.addProperty)
-  const heightValue = useProperty(state=>state.propertyForComponent)?.filter(data=> data.idforPreviewElement === id)?.[0]?.height?? 0;
+  const useHeight = useProperty((state) => state.addProperty);
+  const heightValue =
+    useProperty((state) => state.propertyForComponent)?.filter(
+      (data) => data.idforPreviewElement === id
+    )?.[0]?.height ?? 0;
 
   const updateValue = (event: React.ChangeEvent<HTMLInputElement>) => {
     // console.log(event.target.value)
-    const value = Number(event.target.value)
+    const value = Number(event.target.value);
     useHeight({
-      idforPreviewElement:idforPreviewElement,
-      height: value
-    })
-  }
+      idforPreviewElement: idforPreviewElement,
+      height: value,
+      taskParentId: taskParentId,
+      coulmnParentid: coulmnParentid,
+    });
+  };
 
   const deleteElement = (
     generatedId: number,

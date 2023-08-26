@@ -16,9 +16,8 @@ const AddModelData = ({
   idForAddElement,
   idForPreviewElement,
   taskParentId,
+  coulmnParentid,
   name,
-  svg,
-  svg2,
   comp,
   previecom,
   eleFunction,
@@ -26,7 +25,8 @@ const AddModelData = ({
 }: {
   idForAddElement: Function;
   idForPreviewElement: Function;
-  taskParentId:number;
+  taskParentId?:number;
+  coulmnParentid?:number
   name: string;
   svg: string;
   svg2?: string;
@@ -40,8 +40,8 @@ const AddModelData = ({
       onClick={() => {
         const generatedId = idForAddElement();
         const generatedIdForPreviewElement = idForPreviewElement();
-        eleFunction({ comp, generatedId, generatedIdForPreviewElement, taskParentId:taskParentId });
-        elePreviewFunction({ previecom, generatedIdForPreviewElement, taskParentId:taskParentId });
+        eleFunction({ comp, generatedId, generatedIdForPreviewElement, taskParentId:taskParentId, coulmnParentid:coulmnParentid });
+        elePreviewFunction({ previecom, generatedIdForPreviewElement, taskParentId:taskParentId, coulmnParentid:coulmnParentid });
       }}
       className="w-full dark:bg-black bg-white dark:text-white text-black dark:hover:text-black hover:text-white"
     >
@@ -49,12 +49,9 @@ const AddModelData = ({
     </Button>
   );
 };
-export default function AddElement({ taskParentId }: { taskParentId:number }) {
-  // console.log(taskParentId)
+export default function AddElement({ taskParentId, coulmnParentid }: { taskParentId:number, coulmnParentid?:number }) {
   const element = useElementStore((state: any) => state.inc);
   const elementPreview = usePreviewElementStore((state: any) => state.inc);
-  // const getElement = useElementStore((state: any) => state.element);
-  // console.log(getElement);
 
   return (
     <>
@@ -75,6 +72,7 @@ export default function AddElement({ taskParentId }: { taskParentId:number }) {
             eleFunction={element}
             elePreviewFunction={elementPreview}
             taskParentId={taskParentId}
+            coulmnParentid={coulmnParentid}
           />
         ))}
       </div>

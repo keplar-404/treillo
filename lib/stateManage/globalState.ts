@@ -4,6 +4,7 @@ interface Element {
   generatedId?: number;
   generatedIdForPreviewElement?: number;
   taskParentId: number;
+  coulmnParentid: number;
 }
 
 interface State {
@@ -11,6 +12,7 @@ interface State {
   inc: (obj: Element) => void;
   dec: (id: number | undefined) => void;
   delFullTask: (id: number | undefined) => void;
+  delFullTaskColumn: (id: number | undefined) => void;
 }
 
 // Create a state with an initial empty array of elements for Element add and remove
@@ -35,6 +37,13 @@ export const useElementStore = create<State>((set) => ({
     set((state) => {
       const filtereddata = state.element.filter(
         (data) => data.taskParentId !== id
+      );
+      return { element: filtereddata };
+    }),
+  delFullTaskColumn: (id) =>
+    set((state) => {
+      const filtereddata = state.element.filter(
+        (data) => data.coulmnParentid !== id
       );
       return { element: filtereddata };
     }),
@@ -65,11 +74,20 @@ export const usePreviewElementStore = create<State>((set) => ({
       );
       return { element: filtereddata };
     }),
+  delFullTaskColumn: (id) =>
+    set((state) => {
+      const filtereddata = state.element.filter(
+        (data) => data.coulmnParentid !== id
+      );
+      return { element: filtereddata };
+    }),
 }));
 
 // Define the type of the obj parameter
 type Property = {
   idforPreviewElement: number;
+  taskParentId: number;
+  coulmnParentid: number;
   text_Property?: string;
   color_Style?: string;
   position?: string;
@@ -83,6 +101,8 @@ type StateForPropertyComponent = {
   propertyForComponent: Property[];
   addProperty: (obj: Property) => void;
   deleteProperty: (id: number | undefined) => void;
+  delFullTask: (id: number | undefined) => void;
+  delFullTaskColumn: (id: number | undefined) => void;
 };
 
 export const useProperty = create<StateForPropertyComponent>((set) => ({
@@ -130,11 +150,25 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
       );
       return { propertyForComponent: updatedPropety };
     }),
+  delFullTask: (id) =>
+    set((state) => {
+      const filtereddata = state.propertyForComponent.filter(
+        (data) => data.taskParentId !== id
+      );
+      return { propertyForComponent: filtereddata };
+    }),
+  delFullTaskColumn: (id) =>
+    set((state) => {
+      const filtereddata = state.propertyForComponent.filter(
+        (data) => data.coulmnParentid !== id
+      );
+      return { propertyForComponent: filtereddata };
+    }),
 }));
 
 type PropertyOfTask = {
   taskParentid: number;
-  usePropertyId?: number;
+  coulmnParentid?: number;
 };
 type StateForTaskComponents = {
   taskComponents: PropertyOfTask[];
@@ -146,12 +180,10 @@ export const mangeTaskComponents = create<StateForTaskComponents>((set) => ({
   taskComponents: [],
   addTaskComponent: (obj) =>
     set((state) => {
-      // const id  = obj.id
       return { taskComponents: [...state.taskComponents, obj] };
     }),
   deleteTaskCompnent: (obj) =>
     set((state) => {
-      const usePropertyId = obj.usePropertyId;
       const taskParentid = obj.taskParentid;
       const allTaskComponents = [...state.taskComponents];
       const filteredTaskComponents = allTaskComponents.filter(
@@ -175,7 +207,6 @@ export const mangeColumnComponents = create<StateForColumnComponents>(
     columnComponents: [],
     addColumnComponent: (obj) =>
       set((state) => {
-        // const id  = obj.id
         return { columnComponents: [...state.columnComponents, obj] };
       }),
     deleteColumnCompnent: (obj) =>
