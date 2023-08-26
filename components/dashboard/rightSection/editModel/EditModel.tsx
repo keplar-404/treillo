@@ -1,8 +1,7 @@
 import { AlertDialog, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import ModelBox from "./ModelBox";
 
-export default function EditModel() {
+export default function EditModel({ taskParentId }: { taskParentId:number }) {
   return (
     <>
       <AlertDialog>
@@ -37,7 +36,7 @@ export default function EditModel() {
         </AlertDialogTrigger>
         {/* my component */}
         <div className="flex">
-        <ModelBox />
+        <ModelBox taskParentId={taskParentId} />
         </div>
       </AlertDialog>
     </>

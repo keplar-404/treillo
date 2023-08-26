@@ -5,16 +5,51 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
 import EditModel from "./editModel/EditModel";
-import { useRef, useState } from "react";
-import { Input } from "@/components/ui/input";
+import Image from "next/image";
+import { mangeTaskComponents, useElementStore, usePreviewElementStore, useProperty } from "@/lib/stateManage/globalState";
 
-export default function Task() {
+export default function Task({ taskParentId }: { taskParentId: number }) {
+  const deleteTaskState = mangeTaskComponents(state=> state.deleteTaskCompnent)
+  
+  const getUseElementStores = useElementStore(state=> state.element)
+  const getUseElementStore = getUseElementStores.filter(data=> data.taskParentId === taskParentId)
+  const delFullTaskStore = useElementStore(state=> state.delFullTask)
+  
+  const getPreviews = usePreviewElementStore(state=> state.element)
+  const getPreview = getPreviews.filter(data=> data.taskParentId === taskParentId)
+  const delFullTaskPreview = usePreviewElementStore(state=> state.delFullTask)
+  
+  const getPropertys = useProperty(state=> state.propertyForComponent)
+  const getProperty = getPropertys.filter(data=> data.idforPreviewElement === getPreview[0]?.generatedIdForPreviewElement)
+  const delProperty = useProperty(state=> state.deleteProperty)
+  
+  
+  
+  const deleteTaskComponent = ()=> {
+    deleteTaskState({ taskParentid: taskParentId })
+    delFullTaskStore(getUseElementStore[0]?.taskParentId)
+    delFullTaskPreview(getPreview[0]?.taskParentId)
+    delProperty(getPreview[0]?.generatedIdForPreviewElement)
+
+    // console.log(getPreview)
+    // console.log(getPropertys)
+    // console.log(getProperty)
+    
+    
+    
+    // console.log(getPreview[0]?.taskParentId )
+    // delProperty(getProperty[0]?.idforPreviewElement)
+    // delPreview(getPreview[0]?.generatedId)
+
+    // console.log( getPreviews)
+    // console.log( getPropertys)
+
+  } 
   return (
     <>
       <Accordion
-        className="mt-8 dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
+        className="mt-3 dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
         type="single"
         collapsible
       >
@@ -22,20 +57,36 @@ export default function Task() {
           <div>
             <div className="flex w-full justify-between items-center">
               <p className="font-semibold">Task Title</p>
-              <AccordionTrigger></AccordionTrigger>
+              <div className="flex flex-row gap-x-3 justify-center items-center">
+                <Image
+                  src={"./Delete.svg"}
+                  alt="icon"
+                  height={16}
+                  width={16}
+                  className="dark:hidden block cursor-pointer"
+                  onClick={deleteTaskComponent}
+                />
+                <Image
+                  src={"./deleteWhite.svg"}
+                  alt="icon"
+                  height={14}
+                  width={14}
+                  className="dark:block hidden cursor-pointer"
+                  onClick={deleteTaskComponent}
+                />
+                <AccordionTrigger></AccordionTrigger>
+              </div>
             </div>
-            <div className="w-full flex justify-between font-semibold opacity-[45%] mt-1 mb-3">
-              <p className="text-[12px] flex justify-center items-center gap-x-2">
-                Date: Dec 3, 2023{" "}
+            <div className="w-full flex justify-between items-center opacity-[45%] mt-1 mb-3">
+                <p className="text-[11px] ">Date: Dec 3, 2023</p>
                 <div className="w-[6px] h-[6px] rounded-full dark:bg-white bg-black"></div>
-              </p>
-              <p className="text-[12px]">Assignee: shehab</p>
+              <p className="text-[11px]">Assignee: shehab</p>
             </div>
           </div>
           <AccordionContent>
             <div className="mt-[2rem]">
               <div className="w-full h-fit flex justify-end">
-                <EditModel />
+                <EditModel taskParentId={taskParentId} />
               </div>
               <p className="mt-4">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -44,6 +95,7 @@ export default function Task() {
                 dicta fugit optio magni, perspiciatis dignissimos officiis cum,
                 praesentium animi incidunt.
               </p>
+
             </div>
           </AccordionContent>
         </AccordionItem>

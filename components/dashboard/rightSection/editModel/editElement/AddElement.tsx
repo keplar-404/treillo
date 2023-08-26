@@ -15,6 +15,7 @@ const randomIdForPreviewElement = () => (initailIdForPreviewElement += 1);
 const AddModelData = ({
   idForAddElement,
   idForPreviewElement,
+  taskParentId,
   name,
   svg,
   svg2,
@@ -25,6 +26,7 @@ const AddModelData = ({
 }: {
   idForAddElement: Function;
   idForPreviewElement: Function;
+  taskParentId:number;
   name: string;
   svg: string;
   svg2?: string;
@@ -38,8 +40,8 @@ const AddModelData = ({
       onClick={() => {
         const generatedId = idForAddElement();
         const generatedIdForPreviewElement = idForPreviewElement();
-        eleFunction({ comp, generatedId, generatedIdForPreviewElement });
-        elePreviewFunction({ previecom, generatedIdForPreviewElement });
+        eleFunction({ comp, generatedId, generatedIdForPreviewElement, taskParentId:taskParentId });
+        elePreviewFunction({ previecom, generatedIdForPreviewElement, taskParentId:taskParentId });
       }}
       className="w-full dark:bg-black bg-white dark:text-white text-black dark:hover:text-black hover:text-white"
     >
@@ -47,7 +49,8 @@ const AddModelData = ({
     </Button>
   );
 };
-export default function AddElement() {
+export default function AddElement({ taskParentId }: { taskParentId:number }) {
+  // console.log(taskParentId)
   const element = useElementStore((state: any) => state.inc);
   const elementPreview = usePreviewElementStore((state: any) => state.inc);
   // const getElement = useElementStore((state: any) => state.element);
@@ -71,6 +74,7 @@ export default function AddElement() {
             previecom={data.previewcomponent}
             eleFunction={element}
             elePreviewFunction={elementPreview}
+            taskParentId={taskParentId}
           />
         ))}
       </div>

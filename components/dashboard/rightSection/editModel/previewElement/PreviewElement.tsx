@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React from "react";
 import CheckBoxPreview from "./CheckBoxPreview";
 import TextBoxPreview from "./TextBoxPreview";
@@ -11,27 +11,28 @@ import { usePreviewElementStore } from "@/lib/stateManage/globalState";
 interface Prop {
   previecom: React.ElementType;
   generatedIdForPreviewElement: number;
+  taskParentId: number;
 }
 
-export default function PreviewElement() {
+export default function PreviewElement({
+  taskParentId,
+}: {
+  taskParentId: number;
+}) {
   const getElement = usePreviewElementStore((state: any) => state.element);
   return (
     <>
       <div className="w-[23rem] h-[20rem] overflow-y-scroll p-[1.6rem] flex flex-col gap-y-[.9rem] dark:bg-[#101214] bg-[#F2F2F2] rounded-[1rem]">
-        
         {getElement.map((data: Prop, index: number) => {
+          if (data.taskParentId != taskParentId) return;
           return (
             <div key={index + 1}>
-              {React.createElement(data.previecom, { id: data.generatedIdForPreviewElement })}
+              {React.createElement(data.previecom, {
+                id: data.generatedIdForPreviewElement,
+              })}
             </div>
           );
         })}
-        {/* <CheckBoxPreview/>
-        <TextBoxPreview/>
-        <CodePreviewBox/>
-        <DeviderPreview/>
-        <EmptyPreview/>
-        <ImagePreview/> */}
       </div>
     </>
   );
