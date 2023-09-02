@@ -1,38 +1,28 @@
 import { create } from "zustand";
+import {
+  State,
+  StateForPropertyComponent,
+  StateForTaskComponents,
+  StateForColumnComponents,
+} from "./type";
 
-interface Element {
-  generatedId?: number;
-  generatedIdForPreviewElement?: number;
-  taskParentId: number;
-  coulmnParentid: number;
-}
-
-interface State {
-  element: Element[];
-  inc: (obj: Element) => void;
-  dec: (id: number | undefined) => void;
-  delFullTask: (id: number | undefined) => void;
-  delFullTaskColumn: (id: number | undefined) => void;
-}
-
-// Create a state with an initial empty array of elements for Element add and remove
+// Create a state store for managing elements (Element add and remove)
 export const useElementStore = create<State>((set) => ({
   element: [],
-  // Define an inc function that adds an element to the array
+  // Add an element to the array
   inc: (obj) =>
     set((state) => {
       return { element: [...state.element, obj] };
     }),
-  // Define a dec function that removes an element from the array by id
+  // Remove an element from the array by id
   dec: (id) =>
     set((state) => {
-      // console.log(id);
       const filtereddata = state.element.filter(
         (data) => data.generatedId !== id
       );
-      // console.log( filtereddata );
       return { element: filtereddata };
     }),
+  // Remove all elements with the specified task id
   delFullTask: (id) =>
     set((state) => {
       const filtereddata = state.element.filter(
@@ -40,6 +30,7 @@ export const useElementStore = create<State>((set) => ({
       );
       return { element: filtereddata };
     }),
+  // Remove all elements with the specified column id
   delFullTaskColumn: (id) =>
     set((state) => {
       const filtereddata = state.element.filter(
@@ -51,15 +42,15 @@ export const useElementStore = create<State>((set) => ({
 
 // --------------------------------------------------------------------------------------------
 
-// Create a state with an initial empty array of elements preview add and remove
+// Create a state store for managing preview elements (Element add and remove)
 export const usePreviewElementStore = create<State>((set) => ({
   element: [],
-  // Define an inc function that adds an element to the array
+  // Add a preview element to the array
   inc: (obj) =>
     set((state) => {
       return { element: [...state.element, obj] };
     }),
-  // Define a dec function that removes an element from the array by id
+  // Remove a preview element from the array by id
   dec: (id) =>
     set((state) => {
       const filtereddata = state.element.filter(
@@ -67,6 +58,7 @@ export const usePreviewElementStore = create<State>((set) => ({
       );
       return { element: filtereddata };
     }),
+  // Remove all preview elements with the specified task id
   delFullTask: (id) =>
     set((state) => {
       const filtereddata = state.element.filter(
@@ -74,6 +66,7 @@ export const usePreviewElementStore = create<State>((set) => ({
       );
       return { element: filtereddata };
     }),
+  // Remove all preview elements with the specified column id
   delFullTaskColumn: (id) =>
     set((state) => {
       const filtereddata = state.element.filter(
@@ -83,44 +76,19 @@ export const usePreviewElementStore = create<State>((set) => ({
     }),
 }));
 
-// Define the type of the obj parameter
-type Property = {
-  idforPreviewElement: number;
-  taskParentId: number;
-  coulmnParentid: number;
-  text_Property?: string;
-  color_Style?: string;
-  position?: string;
-  image?: Blob | File | undefined;
-  slider?: number;
-  height?: number;
-};
-
-// Define the type of the state
-type StateForPropertyComponent = {
-  propertyForComponent: Property[];
-  addProperty: (obj: Property) => void;
-  deleteProperty: (id: number | undefined) => void;
-  delFullTask: (id: number | undefined) => void;
-  delFullTaskColumn: (id: number | undefined) => void;
-};
-
+// Create a state store for managing property components
 export const useProperty = create<StateForPropertyComponent>((set) => ({
   propertyForComponent: [],
+  // Add or update a property component
   addProperty: (obj) =>
     set((state) => {
       const id = obj.idforPreviewElement || "";
-      const text = obj.text_Property || "";
-      const color = obj.color_Style || "";
-      const position = obj.position || "";
-      const image = obj.image || undefined;
-      const slider = obj.slider || 0;
-      const height = obj.height || 1;
-      let allProperty = state.propertyForComponent;
+      const allProperty = state.propertyForComponent;
 
       if (allProperty.length === 0) {
         return { propertyForComponent: [obj] };
       } else {
+        // Find matching property and update its values
         const matchedId = allProperty.filter(
           (data) => data.idforPreviewElement === id
         );
@@ -131,18 +99,18 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
         if (matchedId.length === 0) {
           return { propertyForComponent: [...state.propertyForComponent, obj] };
         } else {
-          // console.log(matchedId[0])
-          matchedId[0].text_Property = text;
-          matchedId[0].color_Style = color;
-          matchedId[0].position = position;
-          matchedId[0].image = image;
-          matchedId[0].slider = slider;
-          matchedId[0].height = height;
+          matchedId[0].text_Property = obj.text_Property || "";
+          matchedId[0].color_Style = obj.color_Style || "";
+          matchedId[0].position = obj.position || "";
+          matchedId[0].image = obj.image || undefined;
+          matchedId[0].slider = obj.slider || 0;
+          matchedId[0].height = obj.height || 1;
 
           return { propertyForComponent: [...matchedId, ...unMatchedId] };
         }
       }
     }),
+  // Delete a property component by id
   deleteProperty: (id) =>
     set((state) => {
       const updatedPropety = state.propertyForComponent.filter(
@@ -150,6 +118,7 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
       );
       return { propertyForComponent: updatedPropety };
     }),
+  // Remove all property components with the specified task id
   delFullTask: (id) =>
     set((state) => {
       const filtereddata = state.propertyForComponent.filter(
@@ -157,6 +126,7 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
       );
       return { propertyForComponent: filtereddata };
     }),
+  // Remove all property components with the specified column id
   delFullTaskColumn: (id) =>
     set((state) => {
       const filtereddata = state.propertyForComponent.filter(
@@ -166,54 +136,39 @@ export const useProperty = create<StateForPropertyComponent>((set) => ({
     }),
 }));
 
-type PropertyOfTask = {
-  taskParentid: number;
-  coulmnParentid?: number;
-};
-type StateForTaskComponents = {
-  taskComponents: PropertyOfTask[];
-  addTaskComponent: (obj: PropertyOfTask) => void;
-  deleteTaskCompnent: (obj: PropertyOfTask) => void;
-};
-
+// Create a state store for managing task components
 export const mangeTaskComponents = create<StateForTaskComponents>((set) => ({
   taskComponents: [],
+  // Add a task component
   addTaskComponent: (obj) =>
     set((state) => {
       return { taskComponents: [...state.taskComponents, obj] };
     }),
+  // Delete a task component
   deleteTaskCompnent: (obj) =>
     set((state) => {
       const taskParentid = obj.taskParentid;
-      const allTaskComponents = [...state.taskComponents];
-      const filteredTaskComponents = allTaskComponents.filter(
+      const filteredTaskComponents = state.taskComponents.filter(
         (data) => data.taskParentid !== taskParentid
       );
       return { taskComponents: filteredTaskComponents };
     }),
 }));
 
-type PropertyOfColumn = {
-  coulmnParentid: number;
-};
-type StateForColumnComponents = {
-  columnComponents: PropertyOfColumn[];
-  addColumnComponent: (obj: PropertyOfColumn) => void;
-  deleteColumnCompnent: (obj: PropertyOfColumn) => void;
-};
-
+// Create a state store for managing column components
 export const mangeColumnComponents = create<StateForColumnComponents>(
   (set) => ({
     columnComponents: [],
+    // Add a column component
     addColumnComponent: (obj) =>
       set((state) => {
         return { columnComponents: [...state.columnComponents, obj] };
       }),
+    // Delete a column component
     deleteColumnCompnent: (obj) =>
       set((state) => {
         const id = obj.coulmnParentid;
-        const allColumnComponents = [...state.columnComponents];
-        const filteredColumnComponents = allColumnComponents.filter(
+        const filteredColumnComponents = state.columnComponents.filter(
           (data) => data.coulmnParentid !== id
         );
         return { columnComponents: filteredColumnComponents };
