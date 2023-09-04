@@ -38,7 +38,7 @@ export type StateForPropertyComponent = {
 };
 
 // Define the properties of a task
-type PropertyOfTask = {
+export type PropertyOfTask = {
   taskParentid: number;
   coulmnParentid?: number;
 };
@@ -51,7 +51,7 @@ export type StateForTaskComponents = {
 };
 
 // Define the properties of a column
-type PropertyOfColumn = {
+export type PropertyOfColumn = {
   coulmnParentid: number;
 };
 

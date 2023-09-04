@@ -8,6 +8,8 @@ import {
 import EditModel from "./editModel/EditModel";
 import Image from "next/image";
 import { mangeTaskComponents, useElementStore, usePreviewElementStore, useProperty } from "@/lib/stateManage/globalState";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function Task({ taskParentId, coulmnParentid }: { taskParentId: number, coulmnParentid?:number }) {
   const deleteTaskState = mangeTaskComponents(state=> state.deleteTaskCompnent)
@@ -32,9 +34,15 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
     delFullTaskPreview(getPreview[0]?.taskParentId)
     delFullTaskProperty(getProperty[0]?.taskParentId)
   } 
+
+
+
+
+
   return (
     <>
       <Accordion
+      
         className="mt-3 dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
         type="single"
         collapsible
