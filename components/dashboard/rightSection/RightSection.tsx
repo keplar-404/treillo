@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import TaskColoumn from "./TaskColoumn";
 import { mangeColumnComponents } from "@/lib/stateManage/globalState";
 import {
@@ -19,11 +19,13 @@ import {
 } from "@dnd-kit/sortable";
 import { createPortal } from "react-dom";
 import { PropertyOfColumn } from "@/lib/stateManage/type";
+import Task from "./Task";
 
 let initailColumnId = 0;
 
 export default function RightSection() {
   const getColumn = mangeColumnComponents((state) => state.columnComponents);
+  console.log("re")
 
   // this is for managing column components
   const addColumnComponent = mangeColumnComponents(
@@ -43,18 +45,32 @@ export default function RightSection() {
   const [movedColumn, setMovedColumn] = useState([...getColumn]);
 
   // this is for getting active column id
-  const [activeColumnID, setActiveColumnID] = useState<number>(0);
+  const [activeColumnID, setActiveColumnID] = useState<number | null>(null);
+  const [activeTaskID, setActiveTaskID] = useState<number | null>(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setMovedColumn((columns: PropertyOfColumn[]) => {
       let columnsArray = [...columns];
-      const unMachedObj = getColumn.filter((data) => {
-        return !columnsArray.some(
-          (columnsData) => columnsData.coulmnParentid === data.coulmnParentid
-        );
-      });
-      columnsArray = columnsArray.concat(unMachedObj);
-      return columnsArray;
+      const isAnyColumnDelete = columnsArray.filter((data) =>
+        getColumn.some(
+          (column) => column.coulmnParentid === data.coulmnParentid
+        )
+      );
+
+      if (
+        getColumn.length > columns.length ||
+        getColumn.length === columns.length
+      ) {
+        const unMachedObj = getColumn.filter((data) => {
+          return !columnsArray.some(
+            (columnsData) => columnsData.coulmnParentid === data.coulmnParentid
+          );
+        });
+        columnsArray = columnsArray.concat(unMachedObj);
+        return columnsArray;
+      } else if (getColumn.length < columns.length) {
+        return isAnyColumnDelete;
+      }
     });
     setCreatePortalDom(document.body);
   }, [getColumn]);
@@ -71,6 +87,14 @@ export default function RightSection() {
   // this is for after drag end movedColumn state array index number will change
   const dragEndFun = (event: DragEndEvent) => {
     const { active, over } = event;
+    setActiveColumnID(null)
+    setActiveTaskID(null)
+
+    if (active.data.current?.type === "Task") {
+      // console.log(active.data.current);
+      return;
+    }
+    // console.log("t");
 
     if (active.id !== over?.id) {
       setMovedColumn((columns: any) => {
@@ -88,7 +112,12 @@ export default function RightSection() {
   // this is drag start and drag overlay and active column
   const onDragStartFun = (event: DragStartEvent) => {
     if (event.active.data.current?.type === "Column") {
+      // console.log("t");
       setActiveColumnID(event.active.data.current.columnID);
+      return;
+    } else if (event.active.data.current?.type === "Task") {
+      // console.log(event.active.data.current)
+      setActiveTaskID(event.active.data.current.taskID)
       return;
     }
   };
@@ -119,7 +148,8 @@ export default function RightSection() {
             {createPortalDom &&
               createPortal(
                 <DragOverlay>
-                  {<TaskColoumn coulmnParentid={activeColumnID} />}
+                  {activeColumnID && <TaskColoumn coulmnParentid={activeColumnID} />}
+                  {activeTaskID && <Task taskParentId={activeTaskID} />}
                 </DragOverlay>,
                 document.body
               )}

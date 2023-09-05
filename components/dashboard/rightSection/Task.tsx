@@ -35,14 +35,46 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
     delFullTaskProperty(getProperty[0]?.taskParentId)
   } 
 
+  // this is for drag event 
+  const {
+    attributes,
+    listeners,
+    transform,
+    transition,
+    setNodeRef,
+    isDragging,
+  } = useSortable({
+    id: taskParentId * 50,
+    data: {
+      type: "Task",
+      taskID: taskParentId * 50,
+    },
+  });
 
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
 
-
+  if (isDragging) {
+    return (
+      <div
+        ref={setNodeRef}
+        style={style}
+        {...attributes} 
+       {...listeners} 
+        className="w-[15.4rem] h-[7.1rem] rounded-[20px] border-[2px] border-rose-400"
+      ></div>
+    );
+  }
 
   return (
     <>
       <Accordion
-      
+       ref={setNodeRef}
+       style={style}
+       {...attributes} // this is for which html tag will drag based on listerners
+       {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
         className="mt-3 dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
         type="single"
         collapsible

@@ -7,7 +7,7 @@ import {
   usePreviewElementStore,
   useProperty,
 } from "@/lib/stateManage/globalState";
-import { useSortable } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
 let id = 0;
@@ -17,8 +17,7 @@ export default function TaskColoumn({
 }: {
   coulmnParentid: number;
 }) {
-
-  // this is for drag event 
+  // this is for drag event
   const {
     attributes,
     listeners,
@@ -43,6 +42,7 @@ export default function TaskColoumn({
   const getTask = mangeTaskComponents((state) => state.taskComponents)?.filter(
     (data) => data.coulmnParentid === coulmnParentid
   );
+  // console.log("re-rnder")
   const delTaskColumnState = mangeColumnComponents(
     (state) => state.deleteColumnCompnent
   );
@@ -86,11 +86,14 @@ export default function TaskColoumn({
     delProperty(getProperty[0]?.coulmnParentid);
   };
 
-// this is for drag overlay
+  // this is for drag overlay
+  
   if (isDragging) {
     return (
       <div
         ref={setNodeRef}
+        {...attributes}
+        {...listeners}
         style={style}
         className="w-[17rem] h-[30rem] rounded-[20px] border-[2px] border-rose-400"
       ></div>
@@ -103,10 +106,10 @@ export default function TaskColoumn({
       ref={setNodeRef}
       style={style}
       {...attributes} // this is for which html tag will drag based on listerners
-      {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
+        // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
       className="w-[17rem] h-[30rem] overflow-y-scroll dark:bg-[#191D20] bg-[#F3F3F3] rounded-[20px] py-[28px] px-[13px]"
     >
-      <div className="w-full flex justify-between">
+      <div {...listeners} className="w-full flex justify-between">
         <div className="flex flex-row justify-center items-center gap-x-2">
           <div className="rounded-full h-[10px] w-[10px] bg-[#2986FF]"></div>
           <p className="font-semibold tracking-[-0.00769rem] text-[18px]">
@@ -163,14 +166,15 @@ export default function TaskColoumn({
       </div>
 
       <div className="w-full mb-9 rounded-s-2xl rounded-e-2xl mt-5 dark:bg-white bg-[#3B3F40] opacity-[40%]  h-[1px]"></div>
-
-      {getTask.map((data) => (
-        <Task
-          key={data.taskParentid}
-          taskParentId={data.taskParentid}
-          coulmnParentid={data.coulmnParentid}
-        />
-      ))}
+      <SortableContext items={getTask.map((data) => data.taskParentid * 50)} strategy={verticalListSortingStrategy}>
+        {getTask.map((data) => (
+          <Task
+            key={data.taskParentid}
+            taskParentId={data.taskParentid}
+            coulmnParentid={data.coulmnParentid}
+          />
+        ))}
+      </SortableContext>
     </div>
   );
 }
