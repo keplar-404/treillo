@@ -23,31 +23,37 @@ import { PropertyOfColumn } from "@/lib/stateManage/type";
 import Task from "./Task";
 import { parentFunForMangeOtherFun } from "./taskColumnMangeFun";
 
+export default React.memo(function RightSection() {
+  const {
+    mangeColumnFun,
+    activeTaskID,
+    dragEndFun,
+    mangeTaskFun,
+    onDragStartFun,
+    sensor,
+  } = parentFunForMangeOtherFun();
 
-export default React.memo( function RightSection() {
-
-const { mangeColumnFun, activeTaskID, dragEndFun, mangeTaskFun, onDragStartFun, sensor } = parentFunForMangeOtherFun()
-
-const { activeColumnID, addColumnFunction, getColumn, getTasks, idArrayOfColumns } = mangeColumnFun()
+  const {
+    activeColumnID,
+    addColumnFunction,
+    getColumn,
+    getTasks,
+    idArrayOfColumns,
+  } = mangeColumnFun();
 
   // this is from drag overlay
   const [createPortalDom, setCreatePortalDom] = useState<HTMLElement | null>(
     null
   );
 
-
-
   useEffect(() => {
     setCreatePortalDom(document.body);
   }, []);
-  
 
-const over= (e:DragOverEvent) => {
-  const { active, over, collisions,activatorEvent, delta } = e
-  // console.log(over?.data.current)
-  console.log(collisions)
-
-}
+  // const over= (e:DragOverEvent) => {
+  //   const { active, over } = e
+  //   console.log(over?.data.current)
+  // }
 
   return (
     <DndContext
@@ -55,7 +61,7 @@ const over= (e:DragOverEvent) => {
       collisionDetection={closestCenter}
       sensors={sensor}
       onDragEnd={dragEndFun}
-      onDragOver={over}
+      // onDragOver={over}
     >
       <section className="w-full h-screen  flex items-center bg-white dark:bg-[#121315]">
         <div className="overflow-x-scroll flex items-center h-[35rem]">
@@ -68,20 +74,9 @@ const over= (e:DragOverEvent) => {
                 <TaskColoumn
                   key={data.coulmnParentid}
                   coulmnParentid={data.coulmnParentid}
-                  getTasks={getTasks}
                 />
               ))}
             </SortableContext>
-
-            {/* this is from drag overlay */}
-            {createPortalDom &&
-              createPortal(
-                <DragOverlay>
-                  {activeColumnID && <TaskColoumn  getTasks={getTasks.filter(taskData=> taskData.coulmnParentid === activeColumnID)} coulmnParentid={activeColumnID} />}
-                  {activeTaskID && <Task taskParentId={activeTaskID} />}
-                </DragOverlay>,
-                document.body
-              )}
 
             <button
               onClick={addColumnFunction}
@@ -92,6 +87,15 @@ const over= (e:DragOverEvent) => {
           </div>
         </div>
       </section>
+      {/* this is from drag overlay */}
+      {createPortalDom &&
+        createPortal(
+          <DragOverlay>
+            {activeColumnID && <TaskColoumn coulmnParentid={activeColumnID} />}
+            {activeTaskID && <Task taskParentId={activeTaskID} />}
+          </DragOverlay>,
+          document.body
+        )}
     </DndContext>
   );
-})
+});

@@ -23,38 +23,18 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { parentFunForMangeOtherFun } from "./taskColumnMangeFun";
+import { mangeTaskComponents } from "@/lib/stateManage/globalState";
 
 export default function TaskColoumn({
   coulmnParentid,
-  getTasks,
 }: {
   coulmnParentid: number;
-  getTasks: PropertyOfTask[];
 }) {
   const { mangeTaskFun } = parentFunForMangeOtherFun();
 
-  const { addTaskFunction, deleteTaskColumn, arrayTasksMoveState } =
-    mangeTaskFun();
+  const { addTaskFunction, deleteTaskColumn, arrayTasksMoveState } = mangeTaskFun();
+  const getTasks = mangeTaskComponents((state) => state.taskComponents);
 
-
-
-  // all state
-  // const [activeTaskID, setActiveTaskID] = useState<number | null>(null);
-  // const [createPortalDom, setCreatePortalDom] = useState<HTMLElement | null>(
-  //   null
-  // );
-
-  // useEffect(() => {
-  //   setCreatePortalDom(document.body);
-  // }, []);
-
-  // const sensor = useSensors(
-  //   useSensor(PointerSensor, {
-  //     activationConstraint: {
-  //       distance: 3, //3 px
-  //     },
-  //   })
-  // );
 
   // this is for drag event
   const {
@@ -76,42 +56,6 @@ export default function TaskColoumn({
     transition,
   };
 
-  // this is drag start and drag overlay and active column
-  // const onDragStartFun = (event: DragStartEvent) => {
-  //   if (event.active.data.current?.type === "Task") {
-  //     setActiveTaskID(event.active.data.current.taskID);
-  //   }
-  // };
-
-  // const dragEndFun = (event: DragEndEvent) => {
-  //   const { active, over } = event;
-
-  //   if (active.data.current?.type === "Task") {
-  //     setActiveTaskID(null);
-
-  //     if (active.id !== over?.id) {
-  //       const activeIndex = getTasks.findIndex((obj: PropertyOfTask) => {
-  //         return obj.taskParentid == active.id;
-  //       });
-  //       const overIndex = getTasks.findIndex(
-  //         (obj: PropertyOfTask) => obj.taskParentid == over?.id
-  //       );
-  //       const newArray = arrayMove(getTasks, activeIndex, overIndex);
-  //       arrayTasksMoveState(newArray);
-  //     }
-  //   }
-  // };
-
-  // const onOver = (event: DragOverEvent) => {
-  //   const { active, over } = event;
-
-  //   if (active.id !== over?.id) {
-  //     console.log("active");
-  //     console.log(over?.data);
-  //     console.log("over");
-  //     console.log(over?.data);
-  //   }
-  // };
 
   // this is for drag overlay
 
@@ -130,6 +74,7 @@ export default function TaskColoumn({
   // this is main return
   return (
     <div
+    
       draggable={true} // if i remove this an erro will appear. When i move the task for this column the other column will not move for the first click. In second click they will move again. So this attribute must need to fix this issue
       ref={setNodeRef}
       style={style}
@@ -144,7 +89,7 @@ export default function TaskColoumn({
             To-do
           </p>
           <p className="bg-[#5E5F61] rounded-full ml-2 px-[7px] py-[2px] text-[10px] text-white">
-            {getTasks.length}
+            {getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).length}
           </p>
         </div>
         <div className="flex justify-center items-center gap-x-3">
@@ -201,15 +146,9 @@ export default function TaskColoumn({
       </div>
 
       <div className="w-full mb-9 rounded-s-2xl rounded-e-2xl mt-5 dark:bg-white bg-[#3B3F40] opacity-[40%]  h-[1px]"></div>
-      {/* <DndContext
-        collisionDetection={closestCenter}
-        onDragStart={onDragStartFun}
-        onDragEnd={dragEndFun}
-        onDragOver={onOver}
-        sensors={sensor}
-      > */}
      
       <SortableContext
+      // onDragEnd={()=>{arrayTasksMoveState}}
         items={getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).map((data) => data.taskParentid)}
         strategy={verticalListSortingStrategy}
       >
@@ -221,19 +160,6 @@ export default function TaskColoumn({
           />
         ))}
       </SortableContext>
-      {/* {createPortalDom &&
-          createPortal(
-            <DragOverlay>
-              {activeTaskID && (
-                <Task
-                  coulmnParentid={coulmnParentid}
-                  taskParentId={activeTaskID}
-                />
-              )}
-            </DragOverlay>,
-            document.body
-          )} */}
-      {/* </DndContext> */}
     </div>
   );
 }
