@@ -1,22 +1,61 @@
 "use client";
 import Task from "./Task";
+import { PropertyOfTask } from "@/lib/stateManage/type";
 import {
-  mangeTaskComponents,
-  mangeColumnComponents,
-  useElementStore,
-  usePreviewElementStore,
-  useProperty,
-} from "@/lib/stateManage/globalState";
-import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+  DndContext,
+  DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  DragStartEvent,
+  PointerSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  arrayMove,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
-let id = 0;
+import { parentFunForMangeOtherFun } from "./taskColumnMangeFun";
 
 export default function TaskColoumn({
   coulmnParentid,
+  getTasks,
 }: {
   coulmnParentid: number;
+  getTasks: PropertyOfTask[];
 }) {
+  const { mangeTaskFun } = parentFunForMangeOtherFun();
+
+  const { addTaskFunction, deleteTaskColumn, arrayTasksMoveState } =
+    mangeTaskFun();
+
+
+
+  // all state
+  // const [activeTaskID, setActiveTaskID] = useState<number | null>(null);
+  // const [createPortalDom, setCreatePortalDom] = useState<HTMLElement | null>(
+  //   null
+  // );
+
+  // useEffect(() => {
+  //   setCreatePortalDom(document.body);
+  // }, []);
+
+  // const sensor = useSensors(
+  //   useSensor(PointerSensor, {
+  //     activationConstraint: {
+  //       distance: 3, //3 px
+  //     },
+  //   })
+  // );
+
   // this is for drag event
   const {
     attributes,
@@ -37,57 +76,45 @@ export default function TaskColoumn({
     transition,
   };
 
-  // this all function for manage different component and state function
-  const add_Task = mangeTaskComponents((state) => state.addTaskComponent);
-  const getTask = mangeTaskComponents((state) => state.taskComponents)?.filter(
-    (data) => data.coulmnParentid === coulmnParentid
-  );
-  // console.log("re-rnder")
-  const delTaskColumnState = mangeColumnComponents(
-    (state) => state.deleteColumnCompnent
-  );
+  // this is drag start and drag overlay and active column
+  // const onDragStartFun = (event: DragStartEvent) => {
+  //   if (event.active.data.current?.type === "Task") {
+  //     setActiveTaskID(event.active.data.current.taskID);
+  //   }
+  // };
 
-  const getUseElementStores = useElementStore((state) => state.element);
-  const getUseElementStore = getUseElementStores.filter(
-    (data) => data.coulmnParentid === coulmnParentid
-  );
-  const delFullTaskColumnStore = useElementStore(
-    (state) => state.delFullTaskColumn
-  );
+  // const dragEndFun = (event: DragEndEvent) => {
+  //   const { active, over } = event;
 
-  const getPreviews = usePreviewElementStore((state) => state.element);
-  const getPreview = getPreviews.filter(
-    (data) => data.coulmnParentid === coulmnParentid
-  );
-  const delFullTaskColumnPreview = usePreviewElementStore(
-    (state) => state.delFullTaskColumn
-  );
+  //   if (active.data.current?.type === "Task") {
+  //     setActiveTaskID(null);
 
-  const getPropertys = useProperty((state) => state.propertyForComponent);
-  const getProperty = getPropertys.filter(
-    (data) => data.coulmnParentid === coulmnParentid
-  );
-  const delProperty = useProperty((state) => state.deleteProperty);
+  //     if (active.id !== over?.id) {
+  //       const activeIndex = getTasks.findIndex((obj: PropertyOfTask) => {
+  //         return obj.taskParentid == active.id;
+  //       });
+  //       const overIndex = getTasks.findIndex(
+  //         (obj: PropertyOfTask) => obj.taskParentid == over?.id
+  //       );
+  //       const newArray = arrayMove(getTasks, activeIndex, overIndex);
+  //       arrayTasksMoveState(newArray);
+  //     }
+  //   }
+  // };
 
-  const idGenerate = () => (id += 1);
+  // const onOver = (event: DragOverEvent) => {
+  //   const { active, over } = event;
 
-  const addTaskFunction = () => {
-    const id = idGenerate();
-    add_Task({
-      taskParentid: id,
-      coulmnParentid: coulmnParentid,
-    });
-  };
-
-  const deleteTaskColumn = () => {
-    delTaskColumnState({ coulmnParentid: coulmnParentid });
-    delFullTaskColumnStore(getUseElementStore[0]?.coulmnParentid);
-    delFullTaskColumnPreview(getPreview[0]?.coulmnParentid);
-    delProperty(getProperty[0]?.coulmnParentid);
-  };
+  //   if (active.id !== over?.id) {
+  //     console.log("active");
+  //     console.log(over?.data);
+  //     console.log("over");
+  //     console.log(over?.data);
+  //   }
+  // };
 
   // this is for drag overlay
-  
+
   if (isDragging) {
     return (
       <div
@@ -103,24 +130,30 @@ export default function TaskColoumn({
   // this is main return
   return (
     <div
+      draggable={true} // if i remove this an erro will appear. When i move the task for this column the other column will not move for the first click. In second click they will move again. So this attribute must need to fix this issue
       ref={setNodeRef}
       style={style}
       {...attributes} // this is for which html tag will drag based on listerners
-        // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
+      {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
       className="w-[17rem] h-[30rem] overflow-y-scroll dark:bg-[#191D20] bg-[#F3F3F3] rounded-[20px] py-[28px] px-[13px]"
     >
-      <div {...listeners} className="w-full flex justify-between">
+      <div className="w-full flex justify-between">
         <div className="flex flex-row justify-center items-center gap-x-2">
           <div className="rounded-full h-[10px] w-[10px] bg-[#2986FF]"></div>
           <p className="font-semibold tracking-[-0.00769rem] text-[18px]">
             To-do
           </p>
           <p className="bg-[#5E5F61] rounded-full ml-2 px-[7px] py-[2px] text-[10px] text-white">
-            {getTask.length}
+            {getTasks.length}
           </p>
         </div>
         <div className="flex justify-center items-center gap-x-3">
-          <div className="cursor-pointer" onClick={addTaskFunction}>
+          <div
+            className="cursor-pointer"
+            onClick={() => {
+              addTaskFunction(coulmnParentid);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="23"
@@ -155,7 +188,9 @@ export default function TaskColoumn({
             viewBox="0 0 5 15"
             fill="none"
             className="cursor-pointer"
-            onClick={deleteTaskColumn}
+            onClick={() => {
+              deleteTaskColumn(coulmnParentid);
+            }}
           >
             <path
               d="M2.13973 5.23046C3.32253 5.23046 4.27947 6.1874 4.27947 7.3702C4.27947 8.553 3.32253 9.50993 2.13973 9.50993C0.956937 9.50993 0 8.553 0 7.3702C0 6.1874 0.956937 5.23046 2.13973 5.23046ZM0 2.13973C0 3.32253 0.956937 4.27947 2.13973 4.27947C3.32253 4.27947 4.27947 3.32253 4.27947 2.13973C4.27947 0.956937 3.32253 0 2.13973 0C0.956937 0 0 0.956937 0 2.13973ZM0 12.6007C0 13.7835 0.956937 14.7404 2.13973 14.7404C3.32253 14.7404 4.27947 13.7835 4.27947 12.6007C4.27947 11.4179 3.32253 10.4609 2.13973 10.4609C0.956937 10.4609 0 11.4179 0 12.6007Z"
@@ -166,8 +201,19 @@ export default function TaskColoumn({
       </div>
 
       <div className="w-full mb-9 rounded-s-2xl rounded-e-2xl mt-5 dark:bg-white bg-[#3B3F40] opacity-[40%]  h-[1px]"></div>
-      <SortableContext items={getTask.map((data) => data.taskParentid * 50)} strategy={verticalListSortingStrategy}>
-        {getTask.map((data) => (
+      {/* <DndContext
+        collisionDetection={closestCenter}
+        onDragStart={onDragStartFun}
+        onDragEnd={dragEndFun}
+        onDragOver={onOver}
+        sensors={sensor}
+      > */}
+     
+      <SortableContext
+        items={getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).map((data) => data.taskParentid)}
+        strategy={verticalListSortingStrategy}
+      >
+        {getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).map((data) => (
           <Task
             key={data.taskParentid}
             taskParentId={data.taskParentid}
@@ -175,6 +221,19 @@ export default function TaskColoumn({
           />
         ))}
       </SortableContext>
+      {/* {createPortalDom &&
+          createPortal(
+            <DragOverlay>
+              {activeTaskID && (
+                <Task
+                  coulmnParentid={coulmnParentid}
+                  taskParentId={activeTaskID}
+                />
+              )}
+            </DragOverlay>,
+            document.body
+          )} */}
+      {/* </DndContext> */}
     </div>
   );
 }

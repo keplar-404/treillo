@@ -6,7 +6,7 @@ import {
   StateForColumnComponents,
 } from "./type";
 
-// Create a state store for managing elements (Element add and remove)
+// Create a state store for managing edit elements (Element add and remove)
 export const useElementStore = create<State>((set) => ({
   element: [],
   // Add an element to the array
@@ -153,6 +153,11 @@ export const mangeTaskComponents = create<StateForTaskComponents>((set) => ({
       );
       return { taskComponents: filteredTaskComponents };
     }),
+  arrayMoveTaskComponent: (arry) => {
+    set(() => {
+      return { taskComponents: arry };
+    });
+  },
 }));
 
 // Create a state store for managing column components
@@ -173,5 +178,10 @@ export const mangeColumnComponents = create<StateForColumnComponents>(
         );
         return { columnComponents: filteredColumnComponents };
       }),
+    arrayMoveColumnComponent: (arry) => {
+      set(() => {
+        return { columnComponents: arry };
+      });
+    },
   })
 );

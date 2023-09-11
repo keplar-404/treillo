@@ -10,8 +10,10 @@ import Image from "next/image";
 import { mangeTaskComponents, useElementStore, usePreviewElementStore, useProperty } from "@/lib/stateManage/globalState";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import React from "react";
 
 export default function Task({ taskParentId, coulmnParentid }: { taskParentId: number, coulmnParentid?:number }) {
+ 
   const deleteTaskState = mangeTaskComponents(state=> state.deleteTaskCompnent)
   
   const getUseElementStores = useElementStore(state=> state.element)
@@ -35,7 +37,11 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
     delFullTaskProperty(getProperty[0]?.taskParentId)
   } 
 
-  // this is for drag event 
+  // this is for drag event
+   
+  // console.log("trigger task components")
+  // console.log(taskParentId)
+
   const {
     attributes,
     listeners,
@@ -44,10 +50,11 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
     setNodeRef,
     isDragging,
   } = useSortable({
-    id: taskParentId * 50,
+    id: taskParentId  ,
     data: {
       type: "Task",
-      taskID: taskParentId * 50,
+      taskID: taskParentId,
+      coulmnParentid: coulmnParentid
     },
   });
 
@@ -63,7 +70,7 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
         style={style}
         {...attributes} 
        {...listeners} 
-        className="w-[15.4rem] h-[7.1rem] rounded-[20px] border-[2px] border-rose-400"
+        className="w-[246px] my-3 h-[114px] mt-6 rounded-[20px] border-[2px] border-rose-400"
       ></div>
     );
   }
@@ -75,7 +82,7 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
        style={style}
        {...attributes} // this is for which html tag will drag based on listerners
        {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
-        className="mt-3 dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
+        className="my-3 w-[246px] dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
         type="single"
         collapsible
       >

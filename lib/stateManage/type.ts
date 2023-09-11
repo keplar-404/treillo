@@ -48,6 +48,7 @@ export type StateForTaskComponents = {
   taskComponents: PropertyOfTask[];
   addTaskComponent: (obj: PropertyOfTask) => void; // Function to add a task component
   deleteTaskCompnent: (obj: PropertyOfTask) => void; // Function to delete a task component
+  arrayMoveTaskComponent:(array: PropertyOfTask[]) => void
 };
 
 // Define the properties of a column
@@ -60,4 +61,5 @@ export type StateForColumnComponents = {
   columnComponents: PropertyOfColumn[];
   addColumnComponent: (obj: PropertyOfColumn) => void; // Function to add a column component
   deleteColumnCompnent: (obj: PropertyOfColumn) => void; // Function to delete a column component
+  arrayMoveColumnComponent: (array:PropertyOfColumn[]) => void
 };
