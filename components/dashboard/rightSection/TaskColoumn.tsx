@@ -1,40 +1,27 @@
 "use client";
 import Task from "./Task";
-import { PropertyOfTask } from "@/lib/stateManage/type";
 import {
-  DndContext,
-  DragEndEvent,
-  DragOverEvent,
-  DragOverlay,
-  DragStartEvent,
-  PointerSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
+  mangeColumnComponents,
+  useElementStore,
+  usePreviewElementStore,
+  useProperty,
+} from "@/lib/stateManage/globalState";
 import {
   SortableContext,
-  arrayMove,
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { createPortal } from "react-dom";
-
+import React, { useMemo } from "react";
 import { parentFunForMangeOtherFun } from "./taskColumnMangeFun";
-import { mangeTaskComponents } from "@/lib/stateManage/globalState";
 
 export default function TaskColoumn({
   coulmnParentid,
 }: {
   coulmnParentid: number;
 }) {
-  const { mangeTaskFun } = parentFunForMangeOtherFun();
-
-  const { addTaskFunction, deleteTaskColumn, arrayTasksMoveState } = mangeTaskFun();
-  const getTasks = mangeTaskComponents((state) => state.taskComponents);
-
+  const { getTasks, mangeTaskFun } = parentFunForMangeOtherFun();
+  const { addTaskFunction } = mangeTaskFun();
 
   // this is for drag event
   const {
@@ -56,6 +43,47 @@ export default function TaskColoumn({
     transition,
   };
 
+  // this all function for manage different component and state function
+  const delTaskColumnState = mangeColumnComponents(
+    (state) => state.deleteColumnCompnent
+  );
+
+  const getUseElementStore = useElementStore((state) => state.element)?.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+
+  const delFullTaskColumnStore = useElementStore(
+    (state) => state.delFullTaskColumn
+  );
+
+  const getPreview = usePreviewElementStore((state) => state.element)?.filter(
+    (data) => data.coulmnParentid === coulmnParentid
+  );
+
+  const delFullTaskColumnPreview = usePreviewElementStore(
+    (state) => state.delFullTaskColumn
+  );
+
+  const getProperty = useProperty(
+    (state) => state.propertyForComponent
+  )?.filter((data) => data.coulmnParentid === coulmnParentid);
+
+  const delProperty = useProperty((state) => state.deleteProperty);
+
+  const deleteTaskColumn = () => {
+    delTaskColumnState({ coulmnParentid: coulmnParentid });
+    delFullTaskColumnStore(getUseElementStore[0]?.coulmnParentid);
+    delFullTaskColumnPreview(getPreview[0]?.coulmnParentid);
+    delProperty(getProperty[0]?.coulmnParentid);
+  };
+
+  const idOfArray = useMemo(
+    () =>
+      getTasks
+        .filter((data) => data.coulmnParentid === coulmnParentid)
+        .map((data) => data.taskParentid),
+    [getTasks.length]
+  );
 
   // this is for drag overlay
 
@@ -74,7 +102,6 @@ export default function TaskColoumn({
   // this is main return
   return (
     <div
-    
       draggable={true} // if i remove this an erro will appear. When i move the task for this column the other column will not move for the first click. In second click they will move again. So this attribute must need to fix this issue
       ref={setNodeRef}
       style={style}
@@ -89,7 +116,7 @@ export default function TaskColoumn({
             To-do
           </p>
           <p className="bg-[#5E5F61] rounded-full ml-2 px-[7px] py-[2px] text-[10px] text-white">
-            {getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).length}
+            {idOfArray.length}
           </p>
         </div>
         <div className="flex justify-center items-center gap-x-3">
@@ -133,9 +160,7 @@ export default function TaskColoumn({
             viewBox="0 0 5 15"
             fill="none"
             className="cursor-pointer"
-            onClick={() => {
-              deleteTaskColumn(coulmnParentid);
-            }}
+            onClick={deleteTaskColumn}
           >
             <path
               d="M2.13973 5.23046C3.32253 5.23046 4.27947 6.1874 4.27947 7.3702C4.27947 8.553 3.32253 9.50993 2.13973 9.50993C0.956937 9.50993 0 8.553 0 7.3702C0 6.1874 0.956937 5.23046 2.13973 5.23046ZM0 2.13973C0 3.32253 0.956937 4.27947 2.13973 4.27947C3.32253 4.27947 4.27947 3.32253 4.27947 2.13973C4.27947 0.956937 3.32253 0 2.13973 0C0.956937 0 0 0.956937 0 2.13973ZM0 12.6007C0 13.7835 0.956937 14.7404 2.13973 14.7404C3.32253 14.7404 4.27947 13.7835 4.27947 12.6007C4.27947 11.4179 3.32253 10.4609 2.13973 10.4609C0.956937 10.4609 0 11.4179 0 12.6007Z"
@@ -146,19 +171,23 @@ export default function TaskColoumn({
       </div>
 
       <div className="w-full mb-9 rounded-s-2xl rounded-e-2xl mt-5 dark:bg-white bg-[#3B3F40] opacity-[40%]  h-[1px]"></div>
-     
       <SortableContext
-      // onDragEnd={()=>{arrayTasksMoveState}}
-        items={getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).map((data) => data.taskParentid)}
+        items={getTasks
+          .filter((data) => data.coulmnParentid === coulmnParentid)
+          .map((data) => data.taskParentid)}
         strategy={verticalListSortingStrategy}
       >
-        {getTasks.filter(taskData=> taskData.coulmnParentid === coulmnParentid).map((data) => (
-          <Task
-            key={data.taskParentid}
-            taskParentId={data.taskParentid}
-            coulmnParentid={data.coulmnParentid}
-          />
-        ))}
+        <div className="flex flex-col gap-y-2">
+          {getTasks
+            .filter((data) => data.coulmnParentid === coulmnParentid)
+            .map((data) => (
+              <Task
+                key={data.taskParentid}
+                taskParentId={data.taskParentid}
+                coulmnParentid={data.coulmnParentid}
+              />
+            ))}
+        </div>
       </SortableContext>
     </div>
   );

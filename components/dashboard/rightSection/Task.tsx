@@ -7,40 +7,55 @@ import {
 } from "@/components/ui/accordion";
 import EditModel from "./editModel/EditModel";
 import Image from "next/image";
-import { mangeTaskComponents, useElementStore, usePreviewElementStore, useProperty } from "@/lib/stateManage/globalState";
+import {
+  mangeTaskComponents,
+  useElementStore,
+  usePreviewElementStore,
+  useProperty,
+} from "@/lib/stateManage/globalState";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import React from "react";
 
-export default function Task({ taskParentId, coulmnParentid }: { taskParentId: number, coulmnParentid?:number }) {
- 
-  const deleteTaskState = mangeTaskComponents(state=> state.deleteTaskCompnent)
-  
-  const getUseElementStores = useElementStore(state=> state.element)
-  const getUseElementStore = getUseElementStores.filter(data=> data.taskParentId === taskParentId)
-  const delFullTaskStore = useElementStore(state=> state.delFullTask)
-  
-  const getPreviews = usePreviewElementStore(state=> state.element)
-  const getPreview = getPreviews.filter(data=> data.taskParentId === taskParentId)
-  const delFullTaskPreview = usePreviewElementStore(state=> state.delFullTask)
-  
-  const getPropertys = useProperty(state=> state.propertyForComponent)
-  const getProperty = getPropertys.filter(data=> data.taskParentId === taskParentId)
-  const delFullTaskProperty = useProperty(state=> state.deleteProperty)
-  
-  
-  
-  const deleteTaskComponent = ()=> {
-    deleteTaskState({ taskParentid: taskParentId })
-    delFullTaskStore(getUseElementStore[0]?.taskParentId)
-    delFullTaskPreview(getPreview[0]?.taskParentId)
-    delFullTaskProperty(getProperty[0]?.taskParentId)
-  } 
+export default function Task({
+  taskParentId,
+  coulmnParentid,
+}: {
+  taskParentId: number;
+  coulmnParentid?: number;
+}) {
+  const deleteTaskState = mangeTaskComponents(
+    (state) => state.deleteTaskCompnent
+  );
+
+  const getUseElementStores = useElementStore((state) => state.element);
+  const getUseElementStore = getUseElementStores.filter(
+    (data) => data.taskParentId === taskParentId
+  );
+  const delFullTaskStore = useElementStore((state) => state.delFullTask);
+
+  const getPreviews = usePreviewElementStore((state) => state.element);
+  const getPreview = getPreviews.filter(
+    (data) => data.taskParentId === taskParentId
+  );
+  const delFullTaskPreview = usePreviewElementStore(
+    (state) => state.delFullTask
+  );
+
+  const getPropertys = useProperty((state) => state.propertyForComponent);
+  const getProperty = getPropertys.filter(
+    (data) => data.taskParentId === taskParentId
+  );
+  const delFullTaskProperty = useProperty((state) => state.deleteProperty);
+
+  const deleteTaskComponent = () => {
+    deleteTaskState({ taskParentid: taskParentId });
+    delFullTaskStore(getUseElementStore[0]?.taskParentId);
+    delFullTaskPreview(getPreview[0]?.taskParentId);
+    delFullTaskProperty(getProperty[0]?.taskParentId);
+  };
 
   // this is for drag event
-   
-  // console.log("trigger task components")
-  // console.log(taskParentId)
 
   const {
     attributes,
@@ -50,11 +65,11 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
     setNodeRef,
     isDragging,
   } = useSortable({
-    id: taskParentId  ,
+    id: taskParentId,
     data: {
       type: "Task",
       taskID: taskParentId,
-      coulmnParentid: coulmnParentid
+      coulmnParentid: coulmnParentid,
     },
   });
 
@@ -68,9 +83,9 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
       <div
         ref={setNodeRef}
         style={style}
-        {...attributes} 
-       {...listeners} 
-        className="w-[246px] my-3 h-[114px] mt-6 rounded-[20px] border-[2px] border-rose-400"
+        {...attributes}
+        {...listeners}
+        className="w-[246px] h-[112px] rounded-[20px] border-[2px] border-rose-400"
       ></div>
     );
   }
@@ -78,11 +93,11 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
   return (
     <>
       <Accordion
-       ref={setNodeRef}
-       style={style}
-       {...attributes} // this is for which html tag will drag based on listerners
-       {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
-        className="my-3 w-[246px] dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
+        ref={setNodeRef}
+        style={style}
+        {...attributes} // this is for which html tag will drag based on listerners
+        {...listeners} // this listeners use for drag event. the html tag who have this attritubte will gain tha ability to move and drag the {...attributes} tag.
+        className="w-[246px] dark:bg-[#121315] bg-white p-[16px] rounded-[1rem] border-none"
         type="single"
         collapsible
       >
@@ -110,16 +125,19 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
                 <AccordionTrigger></AccordionTrigger>
               </div>
             </div>
-            <div className="w-full flex justify-between items-center opacity-[45%] mt-1 mb-3">
-                <p className="text-[11px] ">Date: Dec 3, 2023</p>
-                <div className="w-[6px] h-[6px] rounded-full dark:bg-white bg-black"></div>
+            <div className="w-full flex justify-between items-center opacity-[45%] pt-1 pb-3">
+              <p className="text-[11px] ">Date: Dec 3, 2023</p>
+              <div className="w-[6px] h-[6px] rounded-full dark:bg-white bg-black"></div>
               <p className="text-[11px]">Assignee: shehab</p>
             </div>
           </div>
           <AccordionContent>
-            <div className="mt-[2rem]">
+            <div className="pt-[2rem]">
               <div className="w-full h-fit flex justify-end">
-                <EditModel taskParentId={taskParentId} coulmnParentid={coulmnParentid} />
+                <EditModel
+                  taskParentId={taskParentId}
+                  coulmnParentid={coulmnParentid}
+                />
               </div>
               <p className="mt-4">
                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -128,7 +146,6 @@ export default function Task({ taskParentId, coulmnParentid }: { taskParentId: n
                 dicta fugit optio magni, perspiciatis dignissimos officiis cum,
                 praesentium animi incidunt.
               </p>
-
             </div>
           </AccordionContent>
         </AccordionItem>

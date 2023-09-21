@@ -10,6 +10,7 @@ import {
 import { PropertyOfColumn, PropertyOfTask } from "@/lib/stateManage/type";
 import {
   DragEndEvent,
+  DragOverEvent,
   DragStartEvent,
   PointerSensor,
   useSensor,
@@ -35,7 +36,7 @@ export function parentFunForMangeOtherFun() {
     (state) => state.deleteColumnCompnent
   );
   const getUseElementStore = (coulmnParentid: number) =>
-    useElementStore((state) => state.element).filter(
+    useElementStore((state) => state.element)?.filter(
       (data) => data.coulmnParentid === coulmnParentid
     );
   const delFullTaskColumnStore = useElementStore(
@@ -65,11 +66,9 @@ export function parentFunForMangeOtherFun() {
   //  drag start and drag overlay and active column
   const onDragStartFun = (event: DragStartEvent) => {
     if (event.active.data.current?.type === "Column") {
-    //   setActiveTaskID(null);
       setActiveColumnID(event.active.data.current.columnID);
       return;
     } else if (event.active.data.current?.type === "Task") {
-    //   setActiveColumnID(null);
       setActiveTaskID(event.active.data.current.taskID);
     }
   };
@@ -85,29 +84,34 @@ export function parentFunForMangeOtherFun() {
 
   // this is for after drag end movedColumn state array index number will change
   const dragEndFun = (event: DragEndEvent) => {
-    const { active, over } = event;
     setActiveTaskID(null);
     setActiveColumnID(null);
+    const { active, over } = event;
 
-    if (active.data.current?.type === "Task") {
-      if (active.id !== over?.id) {
-        if (
-          active.data.current.coulmnParentid !==
-          over?.data.current?.coulmnParentid
-        ) {
-          return;
-        }
+    if (!over) return;
 
-        const activeIndex = getTasks.findIndex((obj: PropertyOfTask) => {
-          return obj.taskParentid == active.id;
-        });
-        const overIndex = getTasks.findIndex(
-          (obj: PropertyOfTask) => obj.taskParentid == over?.id
-        );
-        const newArray = arrayMove(getTasks, activeIndex, overIndex);
-        arrayTasksMoveState(newArray);
-      }
-    } else if (active.data.current?.type === "Column") {
+    if (active.id === over.id) return;
+
+    // if (active.data.current?.type === "Task") {
+    //   if (active.id !== over?.id) {
+    //     if (
+    //       active.data.current.coulmnParentid !==
+    //       over?.data.current?.coulmnParentid
+    //     ) {
+    //       return;
+    //     }
+    //     const activeIndex = getTasks.findIndex((obj: PropertyOfTask) => {
+    //       return obj.taskParentid == active.id;
+    //     });
+    //     const overIndex = getTasks.findIndex(
+    //       (obj: PropertyOfTask) => obj.taskParentid == over?.id
+    //     );
+    //     const newArray = arrayMove(getTasks, activeIndex, overIndex);
+    //     arrayTasksMoveState(newArray);
+    //   }
+    // }
+
+    if (active.data.current?.type === "Column") {
       if (active.id !== over?.id) {
         const activeIndex = getColumn.findIndex(
           (obj: PropertyOfColumn) => obj.coulmnParentid == active.id
@@ -119,6 +123,34 @@ export function parentFunForMangeOtherFun() {
         const newArrayOfColumn = arrayMove(getColumn, activeIndex, overIndex);
         arrayColumnsMoveState(newArrayOfColumn);
       }
+    }
+  };
+
+  const dragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+    if (active.id === over.id) return;
+
+    if (
+      active.data.current?.type === "Task" &&
+      over.data.current?.type === "Task"
+    ) {
+      // if (
+      //   active.data.current.coulmnParentid !==
+      //   over?.data.current?.coulmnParentid
+      // ) {
+      //   return;
+      // }
+
+      const activeIndex = getTasks.findIndex((obj: PropertyOfTask) => {
+        return obj.taskParentid == active.id;
+      });
+      const overIndex = getTasks.findIndex(
+        (obj: PropertyOfTask) => obj.taskParentid == over?.id
+      );
+      const newArray = arrayMove(getTasks, activeIndex, overIndex);
+      arrayTasksMoveState(newArray);
     }
   };
 
@@ -135,8 +167,6 @@ export function parentFunForMangeOtherFun() {
     const idArrayOfColumns = getColumn.map((data) => data.coulmnParentid);
 
     return {
-      getColumn,
-      getTasks,
       addColumnFunction,
       activeColumnID,
       idArrayOfColumns,
@@ -169,65 +199,11 @@ export function parentFunForMangeOtherFun() {
     mangeColumnFun,
     mangeTaskFun,
     onDragStartFun,
+    dragOver,
     sensor,
     dragEndFun,
     activeTaskID,
+    getColumn,
+    getTasks,
   };
 }
-
-// TODO: All task mange function
-// let idTask = 0;
-
-// export const idGenerate = () => (idTask += 1);
-
-// export function mangeTaskFun() {
-//   //   const getTask = mangeTaskComponents((state) => state.taskComponents);
-//   //   const arrayTasksMoveState = mangeTaskComponents(
-//   //     (state) => state.arrayMoveTaskComponent
-//   //   );
-
-//   const add_Task = mangeTaskComponents((state) => state.addTaskComponent);
-//   const delTaskColumnState = mangeColumnComponents(
-//     (state) => state.deleteColumnCompnent
-//   );
-
-//   const getUseElementStores = useElementStore((state) => state.element);
-//   const delFullTaskColumnStore = useElementStore(
-//     (state) => state.delFullTaskColumn
-//   );
-
-//   const getPreviews = usePreviewElementStore((state) => state.element);
-//   const delFullTaskColumnPreview = usePreviewElementStore(
-//     (state) => state.delFullTaskColumn
-//   );
-
-//   const getPropertys = useProperty((state) => state.propertyForComponent);
-//   const delProperty = useProperty((state) => state.deleteProperty);
-
-//   const addTaskFunction = (coulmnParentid: number) => {
-//     const id = idGenerate();
-//     add_Task({
-//       taskParentid: id,
-//       coulmnParentid: coulmnParentid,
-//     });
-//   };
-
-//   const deleteTaskColumn = (coulmnParentid: number) => {
-//     delTaskColumnState({ coulmnParentid: coulmnParentid });
-//     delFullTaskColumnStore(
-//       getUseElementStores.filter(
-//         (data) => data.coulmnParentid === coulmnParentid
-//       )[0]?.coulmnParentid
-//     );
-//     delFullTaskColumnPreview(
-//       getPreviews.filter((data) => data.coulmnParentid === coulmnParentid)[0]
-//         ?.coulmnParentid
-//     );
-//     delProperty(
-//       getPropertys.filter((data) => data.coulmnParentid === coulmnParentid)[0]
-//         ?.coulmnParentid
-//     );
-//   };
-
-//   return { addTaskFunction, deleteTaskColumn };
-// }
